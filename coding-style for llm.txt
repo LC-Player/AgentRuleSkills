@@ -1,0 +1,198 @@
+C/C++
+
+1. 只要不会导致清晰性降低，使用行末大括号：
+if (...) {
+}
+
+int Func() {
+}
+
+[Bad]
+bool HasData() const override
+{
+    return m_IndexCount > 0;
+}
+
+[Good]
+bool HasData() const override { return m_IndexCount > 0; }
+[Good]
+bool HasData() const override {
+    return m_IndexCount > 0;
+}
+
+
+2. 不太长的行，就不要硬换行【重要】：
+[Bad] int a = 3,
+          b = 5;
+[Goot] int a = 3, b = 5;
+
+
+[Bad]
+void Upload() override
+{
+    m_VBO->SetData(
+        m_CPUVertices.data(),
+        m_VertexCount * sizeof(TVertex));
+}
+
+[Good]
+void Upload() override {
+    m_VBO->SetData(m_CPUVertices.data(), m_VertexCount * sizeof(TVertex));
+}
+
+[Bad]
+void Func(
+    int a,
+    int b,
+    float c
+) {
+    ...
+}
+
+[Good]
+void Func(int a, int b, float c) {
+
+}
+
+[Good]
+void Func(
+    std::vector<int> arr,
+    int i, int j, // 的确很长，酌情有逻辑地换行
+    int head, int tail
+) { // 行末大括号
+
+}
+
+3. 函数/方法为空或很短（getter、setter），可以写在一行里：
+const BatchConfig& GetConfig() const { return m_Config; }
+void TodoFunc() {}
+
+
+4. 参数少的的构造函数写法：
+UserRenderBatch(const BatchConfig& config, Ref<Shader> shader) : m_Config(config), m_Shader(shader) {
+    ...
+}
+参数多的的构造函数写法
+UserRenderBatch(const BatchConfig& config, Ref<Shader> shader, Param p1, Param p2)
+    : m_Config(config), m_Shader(shader), m_P1(p1), m_P2(p2) /* 也可以换行写 */
+{
+    ...
+}
+或者
+UserRenderBatch(const BatchConfig& config, Ref<Shader> shader, Param p1, Param p2)
+    : m_Config(config), m_Shader(shader), 
+      m_P1(p1), m_P2(p2) {...} /* 见下 */
+
+构造函数除了初始化成员变量外没有事情可以做的，或者{}里面只有一行很短的代码的，{...}写在初始化变量那一行里。
+
+5. if、while、for循环就算只有一个语句，原则上也使用括号：
+[bad]
+int func(int key) {
+    if (key == 0) return;
+}
+[goot]
+int func(int key) {
+    if (key == 0) {
+        return;
+    }
+}
+if (condition) {
+    break;
+}
+ 
+while (condition) {
+    operate();
+}
+
+for (...) {
+    if (...) {
+        DoSomething();
+    }
+}
+
+但是，如果有**大量**的单语句块，可以不用括号，但是语句要直接跟在if/for/while后：
+if (condition1) return 1;
+if (condition2) return 2;
+if (condition3) return 3;
+
+下面这种写法不算大量，因为可以用一些方法优化：
+[Bad]
+if (conditionA) return;
+if (conditionB) return;
+if (conditionC) return;
+[Good]
+if (conditionA || conditionB || conditionC) {
+    return;
+}
+
+如果用逻辑表达式太复杂，也可以酌情逐个if。
+[Good]
+if (conditionA) return;
+if (conditionB && conditionC) return;
+if (!conditionA && conditionD) return;
+
+[Bad]
+if (conditionA || conditionB && conditionC || (!conditionA && conditionD)) {
+    return;
+}
+
+
+6. else-if的写法：
+if (...) {
+
+} else if (...) {
+
+} else {
+
+}
+或者，有时为了清晰：
+if (...) {
+
+}
+else if (...) {
+
+}
+else if (...) {
+
+}
+
+7. +-*/等运算符两边要空格，大括号的列表里面是右值的，建议在左大括号的右边，和右大括号的左边保留空格：
+int a[] = { 1, 2, 3 };
+double a[] = { 1.0, 2.0, 3.0 };
+
+8. 浮点数的写法：不采用`.1`,`1.`,`2.`的写法，一定使用`0.1, 1.0, -1.3, 2.0f, 0.0f, 1e-10`等写法。
+有时如果大量的`x.0` `x.0f`显得冗长，只要没有严重的类型转换问题，可以用整数写法，即:
+float a[4][4] = 
+    {{ 1, 2, 3, 4 }, 
+     { 1, 2, 3, 4 }, 
+     { 1, 2, 3, 4 },
+     { 1, 2, 3, 4 }}
+
+9. 大括号、嵌套大括号的换行写法，美观就行。
+double a[4][4] = 
+    {{ 1.0, 2.0, 3.0, 4.0 }, 
+     { 1.0, 2.0, 3.0, 4.0 }, 
+     { 1.0, 2.0, 3.0, 4.0 },
+     { 1.0, 2.0, 3.0, 4.0 }}
+
+double b[4][4] = {
+    { 1.0, 2.0, 3.0, 4.0 }, 
+    { 1.0, 2.0, 3.0, 4.0 }, 
+    { 1.0, 2.0, 3.0, 4.0 },
+    { 1.0, 2.0, 3.0, 4.0 }
+}
+
+double a[4][4] = {{ 1.0, 2.0, 3.0, 4.0 }, 
+                  { 1.0, 2.0, 3.0, 4.0 }, 
+                  { 1.0, 2.0, 3.0, 4.0 },
+                  { 1.0, 2.0, 3.0, 4.0 }}
+
+或者其他的，随便。
+
+10. class中短的getter setter方法写在头文件中内联。
+
+11. 命名风格务必参照上下文。
+
+---
+
+为了代码的可读性上述规则可做灵活调整。
